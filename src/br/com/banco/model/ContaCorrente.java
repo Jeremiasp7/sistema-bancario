@@ -17,7 +17,7 @@ public class ContaCorrente extends ContaAbstrata {
             this.saldo = this.saldo - valor;
             return true;
         }
-        return false; // Rejeitar saque se saldo insuficiente
+        return false; 
     }
 
     @Override
@@ -36,7 +36,6 @@ public class ContaCorrente extends ContaAbstrata {
             throw new IllegalArgumentException("Formato de dados de Conta Corrente inválido.");
         }
         String numero = parts[1];
-        // parts[2] é o CPF, já usado para buscar o cliente
         Float saldo = Float.valueOf(parts[3]);
         return new ContaCorrente(numero, cliente, saldo);
     }

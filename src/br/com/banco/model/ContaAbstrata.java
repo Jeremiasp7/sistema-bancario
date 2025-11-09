@@ -64,7 +64,6 @@ public abstract class ContaAbstrata implements Conta {
         return Objects.hash(numero);
     }
 
-    // Método utilitário para serialização
     protected String toDataString() {
         return getTipo() + ";" + numero + ";" + cliente.getCpf() + ";" + String.valueOf(saldo);
     }
