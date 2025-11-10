@@ -6,7 +6,9 @@ import br.com.banco.model.ContaCorrente;
 import br.com.banco.model.ContaPoupanca;
 import br.com.banco.repository.RepositorioConta;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class ServicoConta {
 
@@ -89,6 +91,61 @@ public class ServicoConta {
         return false; 
     }
 
+    public Float consultarSaldo(String numeroConta) {
+        Conta conta = repositorioConta.buscarPorNumero(numeroConta)
+                .orElseThrow(() -> new IllegalArgumentException("Conta " + numeroConta + " não encontrada."));
+        return conta.getSaldo();
+    }
+
+    public void aplicarRendimentoPoupanca(Float percentual) {
+        if (percentual == null || percentual <= 0) {
+            throw new IllegalArgumentException("O percentual de rendimento deve ser positivo.");
+        }
+
+        List<Conta> contas = repositorioConta.buscarTodos();
+        for (Conta conta : contas) {
+            if (conta.getTipo().equalsIgnoreCase("POUPANCA")) {
+                Float saldoAtual = conta.getSaldo();
+                Float rendimento = saldoAtual * (percentual / 100);
+                conta.depositar(rendimento);
+                repositorioConta.salvar(conta);
+            }
+        }
+    }
+
+    public List<Conta> listarContasOrdenadasPorSaldo() {
+        return repositorioConta.buscarTodos().stream()
+                .sorted((c1, c2) -> c2.getSaldo().compareTo(c1.getSaldo()))
+                .collect(Collectors.toList());
+    }
+
+    public void gerarRelatorioConsolidacao() {
+        List<Conta> contas = repositorioConta.buscarTodos();
+
+        long totalCorrente = contas.stream().filter(c -> c.getTipo().equalsIgnoreCase("CORRENTE")).count();
+        long totalPoupanca = contas.stream().filter(c -> c.getTipo().equalsIgnoreCase("POUPANCA")).count();
+
+        float saldoCorrente = contas.stream()
+                .filter(c -> c.getTipo().equalsIgnoreCase("CORRENTE"))
+                .map(Conta::getSaldo)
+                .reduce(0f, Float::sum);
+
+        float saldoPoupanca = contas.stream()
+                .filter(c -> c.getTipo().equalsIgnoreCase("POUPANCA"))
+                .map(Conta::getSaldo)
+                .reduce(0f, Float::sum);
+
+        float saldoTotal = saldoCorrente + saldoPoupanca;
+        long totalContas = totalCorrente + totalPoupanca;
+
+        System.out.println("\n--- Relatório de Consolidação ---");
+        System.out.println("Contas Corrente: " + totalCorrente + " | Saldo total: R$ " + saldoCorrente);
+        System.out.println("Contas Poupança: " + totalPoupanca + " | Saldo total: R$ " + saldoPoupanca);
+        System.out.println("--------------------------------");
+        System.out.println("Total de contas: " + totalContas);
+        System.out.println("Saldo total do banco: R$ " + saldoTotal);
+    }
+    
     public Optional<Conta> buscarContaPorNumero(String numero) {
         return repositorioConta.buscarPorNumero(numero);
     }

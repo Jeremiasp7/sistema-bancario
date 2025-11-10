@@ -34,6 +34,10 @@ public class Main {
             System.out.println("3. Depósito");
             System.out.println("4. Saque");
             System.out.println("5. Transferência entre Contas");
+            System.out.println("6. Consultar saldo");
+            System.out.println("7. Aplicar rendimento de poupanças");
+            System.out.println("8. Listar contas");
+            System.out.println("9. Relatório de consolidação");
             System.out.println("0. Sair");
             System.out.print("Escolha uma opção: ");
 
@@ -54,6 +58,18 @@ public class Main {
                         break;
                     case 5:
                         realizarTransferencia();
+                        break;
+                    case 6:
+                        consultarSaldo();
+                        break;
+                    case 7:
+                        aplicarRendimento();
+                        break;
+                    case 8:
+                        listarContas();
+                        break;
+                    case 9:
+                        gerarRelatorio();
                         break;
                     case 0:
                         System.out.println("Saindo do sistema. Os dados foram salvos em 'data/'.");
@@ -164,4 +180,52 @@ public class Main {
             System.out.println("Erro ao realizar transferência: " + e.getMessage());
         }
     }
+
+    // Funcionalidade 6: Consulta de saldo
+    private static void consultarSaldo() {
+        System.out.println("\n--- Consulta de Saldo ---");
+        System.out.print("Número da conta: ");
+        String numeroConta = sc.nextLine();
+        try {
+            Float saldo = servicoConta.consultarSaldo(numeroConta);
+            System.out.println("Saldo atual da conta " + numeroConta + ": R$ " + saldo);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Erro: " + e.getMessage());
+        }
+    }
+
+    // Funcionalidade 7: Aplicar rendimento poupanças
+    private static void aplicarRendimento() {
+        System.out.println("\n--- Aplicar Rendimento ---");
+        System.out.print("Percentual de rendimento (%): ");
+        Float percentual = Float.valueOf(sc.nextLine());
+        try {
+            servicoConta.aplicarRendimentoPoupanca(percentual);
+            System.out.println("Rendimento de " + percentual + "% aplicado com sucesso às contas poupança.");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Erro: " + e.getMessage());
+        }
+    }
+
+    // Funcionalidade 8: Listagem de contas
+    private static void listarContas() {
+        System.out.println("\n--- Listagem de Contas ---");
+        var contas = servicoConta.listarContasOrdenadasPorSaldo();
+        if (contas.isEmpty()) {
+            System.out.println("Nenhuma conta cadastrada.");
+            return;
+        }
+        contas.forEach(c -> System.out.println(
+                c.getTipo() + " | " +
+                "Número: " + c.getNumero() + " | " +
+                "Cliente: " + c.getCliente().getNome() + " | " +
+                "Saldo: R$ " + c.getSaldo()
+        ));
+    }
+
+    // Funcionalidade 9: Relatório de consolidação
+    private static void gerarRelatorio() {
+        servicoConta.gerarRelatorioConsolidacao();
+    }
 }
+
