@@ -1,0 +1,4 @@
+#Sat Dec 06 18:42:01 BRT 2025
+configuration*?=1E391FFB0E114932F53508B3597F3FA37710BF50
+module-resource*?\:checkstyle-suppressions.xml=AB365D9BF40F18978D5ABBE9830D4F7645196421
+module-resource*?\:checkstyle-xpath-suppressions.xml=7CB3ED0E9FCDE7CADA7EE6F8D734D2341A37C42C
